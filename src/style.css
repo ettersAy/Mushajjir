@@ -1,10 +1,143 @@
 :root {
+  color-scheme: light;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #1e1b16;
-  background: #f8f4e8;
+  font-size: 14px;
+  color: #18181b;
+  background: #f4f3ef;
+  --canvas: #f4f3ef;
+  --surface: #ffffff;
+  --node: #ffffff;
+  --field: #f1f2f4;
+  --preview: #f7f7f8;
+  --code: #e8eaee;
+  --text: #18181b;
+  --muted: #71717a;
+  --muted-strong: #3f3f46;
+  --panel-border: rgba(32, 36, 41, 0.12);
+  --edge: #a4a8b0;
+  --accent: #2563eb;
+  --relation: #7c3aed;
+  --danger: #dc2626;
+  --button: #20242a;
+  --button-secondary: #5b6470;
+  --button-text: #ffffff;
+  --shadow: 0 12px 34px rgba(23, 23, 23, 0.08);
+  --shadow-strong: 0 16px 44px rgba(23, 23, 23, 0.13);
 }
-* { box-sizing: border-box; }
-html, body, #app { width: 100%; height: 100%; margin: 0; }
-button, input, textarea { font: inherit; }
-.vue-flow__edge-path { stroke: #111; stroke-width: 2.5; }
-.vue-flow__handle { opacity: 0; pointer-events: none; }
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  color: #f4f4f5;
+  background: #17181b;
+  --canvas: #17181b;
+  --surface: #202226;
+  --node: #24272d;
+  --field: #2f333b;
+  --preview: #292d34;
+  --code: #3a3f48;
+  --text: #f4f4f5;
+  --muted: #a1a1aa;
+  --muted-strong: #d4d4d8;
+  --panel-border: rgba(255, 255, 255, 0.11);
+  --edge: #5e6672;
+  --accent: #60a5fa;
+  --relation: #a78bfa;
+  --danger: #ef4444;
+  --button: #f4f4f5;
+  --button-secondary: #4b5563;
+  --button-text: #17181b;
+  --shadow: 0 16px 38px rgba(0, 0, 0, 0.22);
+  --shadow-strong: 0 18px 48px rgba(0, 0, 0, 0.34);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: var(--canvas);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  letter-spacing: 0;
+}
+
+button {
+  transition: transform 140ms ease, opacity 140ms ease, background 140ms ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.vue-flow__edge-path {
+  stroke: var(--edge);
+  stroke-width: 2;
+}
+
+.vue-flow__edge.edge-relation .vue-flow__edge-path {
+  stroke: var(--relation);
+  stroke-dasharray: 7 6;
+}
+
+.vue-flow__edge-text {
+  fill: var(--muted-strong);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.vue-flow__edge-textbg {
+  fill: var(--surface);
+}
+
+.vue-flow__handle {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--surface);
+  background: var(--accent);
+  opacity: 0.18;
+  pointer-events: auto;
+  transition: opacity 140ms ease;
+}
+
+.vue-flow__node:hover .vue-flow__handle,
+.vue-flow__node.selected .vue-flow__handle {
+  opacity: 0.82;
+}
+
+.vue-flow__controls,
+.vue-flow__minimap {
+  overflow: hidden;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  box-shadow: var(--shadow);
+}
+
+.vue-flow__controls-button {
+  border: 0;
+  border-bottom: 1px solid var(--panel-border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.vue-flow__controls-button:hover {
+  background: var(--field);
+}
+
+.vue-flow__minimap-mask {
+  fill: color-mix(in srgb, var(--accent) 12%, transparent);
+}

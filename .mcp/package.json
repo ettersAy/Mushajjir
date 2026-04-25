@@ -1,0 +1,14 @@
+{
+  "name": "mushajjir-mcp-infrastructure",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Project-local MCP infrastructure for Mushajjir.",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@modelcontextprotocol/server-filesystem": "^2026.1.14",
+    "@playwright/mcp": "^0.0.70",
+    "chrome-devtools-mcp": "^0.23.0",
+    "zod": "^4.3.6"
+  }
+}

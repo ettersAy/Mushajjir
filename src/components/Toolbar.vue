@@ -1,33 +1,92 @@
 <template>
   <header class="toolbar">
-    <div>
-      <h1>🌳 Mushajjir</h1>
-      <p>Manual visual task decomposition tree</p>
+    <div class="brand">
+      <strong>{{ settings.settings.general.appName }}</strong>
+      <span>{{ store.nodes.length }} nodes</span>
     </div>
-    <div class="buttons">
+
+    <input
+      v-model="store.searchQuery"
+      class="search"
+      data-search-input
+      type="search"
+      placeholder="Search tasks, notes, tags"
+    />
+
+    <div class="tag-filters" v-if="store.availableTags.length">
+      <button
+        v-for="tag in store.availableTags"
+        :key="tag"
+        class="tag-filter"
+        :class="{ active: store.activeTagFilters.includes(tag) }"
+        :style="tagStyle(tag)"
+        @click="store.toggleTagFilter(tag)"
+      >
+        {{ tag }}
+      </button>
+      <button v-if="store.activeTagFilters.length" class="plain" @click="store.clearTagFilters">Clear</button>
+    </div>
+
+    <div class="actions">
+      <button :class="{ active: outlineOpen }" @click="$emit('toggle-outline')">Outline</button>
+      <button :class="{ active: store.focusMode }" @click="store.toggleFocusMode">Focus</button>
+      <button @click="store.autoLayout('root')">Layout</button>
+      <button @click="downloadMarkdown">Export MD</button>
       <button @click="downloadJson">Export JSON</button>
       <label class="file-button">
-        Import JSON
+        Import
         <input type="file" accept="application/json" @change="importJson" />
       </label>
-      <button class="secondary" @click="store.resetTree">Reset</button>
+      <button @click="settings.toggleTheme">{{ themeLabel }}</button>
+      <button @click="$emit('open-settings')">Settings</button>
+      <button class="danger" @click="store.resetTree">Reset</button>
     </div>
   </header>
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useTreeStore } from '../stores/treeStore'
+import { useSettingsStore } from '../stores/settingsStore'
+import { getTagColor } from '../utils/treeUtils'
+
+defineProps({
+  outlineOpen: { type: Boolean, default: true },
+})
+
+defineEmits(['open-settings', 'toggle-outline'])
 
 const store = useTreeStore()
+const settings = useSettingsStore()
 
-function downloadJson() {
-  const blob = new Blob([store.exportTree()], { type: 'application/json' })
+const themeLabel = computed(() => (
+  settings.settings.general.theme === 'dark' ? 'Light' : 'Dark'
+))
+
+function tagStyle(tag) {
+  const color = getTagColor(tag)
+  return {
+    '--tag-bg': color.background,
+    '--tag-text': color.color,
+  }
+}
+
+function downloadFile(content, extension, type) {
+  const blob = new Blob([content], { type })
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
-  link.download = `mushajjir-tree-${new Date().toISOString().slice(0, 10)}.json`
+  link.download = `mushajjir-tree-${new Date().toISOString().slice(0, 10)}.${extension}`
   link.click()
   URL.revokeObjectURL(url)
+}
+
+function downloadMarkdown() {
+  downloadFile(store.exportMarkdown(), 'md', 'text/markdown')
+}
+
+function downloadJson() {
+  downloadFile(store.exportTree(), 'json', 'application/json')
 }
 
 function importJson(event) {
@@ -50,38 +109,124 @@ function importJson(event) {
 <style scoped>
 .toolbar {
   position: fixed;
-  z-index: 10;
-  top: 16px;
-  left: 16px;
-  right: 16px;
+  z-index: 20;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  display: grid;
+  grid-template-columns: auto minmax(220px, 360px) minmax(160px, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+}
+
+.brand {
+  display: grid;
+  gap: 2px;
+  min-width: 120px;
+}
+
+.brand strong {
+  font-size: 15px;
+  letter-spacing: 0;
+}
+
+.brand span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.search {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  border-radius: 7px;
+  outline: none;
+  padding: 9px 11px;
+  background: var(--field);
+  color: var(--text);
+}
+
+.tag-filters,
+.actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 14px 16px;
-  border: 2px solid #1e1b16;
-  border-radius: 18px;
-  background: rgba(255, 250, 235, 0.94);
-  box-shadow: 7px 8px 0 rgba(30, 27, 22, 0.12);
-  backdrop-filter: blur(10px);
+  gap: 7px;
+  min-width: 0;
 }
-h1 { margin: 0; font-size: 22px; }
-p { margin: 3px 0 0; color: #6f6250; font-size: 13px; }
-.buttons { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-button, .file-button {
+
+.tag-filters {
+  overflow-x: auto;
+  padding-bottom: 1px;
+}
+
+button,
+.file-button {
+  flex: 0 0 auto;
   border: 0;
-  border-radius: 11px;
-  padding: 9px 12px;
-  background: #1e1b16;
-  color: white;
+  border-radius: 7px;
+  padding: 8px 10px;
+  background: var(--button);
+  color: var(--button-text);
   cursor: pointer;
-  font-weight: 800;
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 760;
+  white-space: nowrap;
 }
-.secondary { background: #6f6250; }
-.file-button input { display: none; }
-@media (max-width: 720px) {
-  .toolbar { align-items: flex-start; flex-direction: column; }
-  .buttons { justify-content: flex-start; }
+
+button.active {
+  background: var(--accent);
+}
+
+.plain {
+  background: var(--field);
+  color: var(--muted-strong);
+}
+
+.danger {
+  background: var(--danger);
+}
+
+.tag-filter {
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tag-text) 14%, transparent);
+}
+
+.tag-filter.active {
+  box-shadow: inset 0 0 0 2px var(--tag-text);
+}
+
+.file-button input {
+  display: none;
+}
+
+@media (max-width: 1120px) {
+  .toolbar {
+    grid-template-columns: auto minmax(180px, 1fr);
+  }
+
+  .tag-filters,
+  .actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .toolbar {
+    left: 10px;
+    right: 10px;
+    grid-template-columns: 1fr;
+  }
+
+  .brand {
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+  }
 }
 </style>

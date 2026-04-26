@@ -7,6 +7,7 @@
     />
     <OutlinePanel v-if="showOutline" />
     <SettingsPanel v-if="showSettings" @close="showSettings = false" />
+    <TaskModal v-if="modalNodeId" :node-id="modalNodeId" @close="modalNodeId = null" />
 
     <VueFlow
       :nodes="store.flowNodes"
@@ -21,6 +22,7 @@
       @node-click="onNodeClick"
       @pane-click="onPaneClick"
       @node-drag-stop="onNodeDragStop"
+      @node-double-click="onNodeDoubleClick"
     >
       <Background :pattern-color="backgroundColor" :gap="24" />
       <Controls />
@@ -39,6 +41,7 @@ import Toolbar from '../components/Toolbar.vue'
 import SettingsPanel from '../components/SettingsPanel.vue'
 import OutlinePanel from '../components/OutlinePanel.vue'
 import StickyNode from '../components/StickyNode.vue'
+import TaskModal from '../components/TaskModal.vue'
 import { useTreeStore } from '../stores/treeStore'
 import { useSettingsStore } from '../stores/settingsStore'
 
@@ -46,6 +49,7 @@ const store = useTreeStore()
 const settings = useSettingsStore()
 const showSettings = ref(false)
 const showOutline = ref(true)
+const modalNodeId = ref(null)
 const nodeTypes = {
   task: markRaw(StickyNode),
   sticky: markRaw(StickyNode),
@@ -73,6 +77,10 @@ function onNodeClick({ node }) {
 
 function onPaneClick() {
   store.cancelRelation()
+}
+
+function onNodeDoubleClick({ node }) {
+  modalNodeId.value = node.id
 }
 
 function onNodeDragStop({ node }) {

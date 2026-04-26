@@ -24,6 +24,7 @@
       <button class="icon-button nodrag" :title="data.collapsed ? 'Expand' : 'Collapse'" @click="store.toggleCollapse(id)">
         {{ data.collapsed ? '+' : '-' }}
       </button>
+      <button class="expand-btn nodrag" title="Open in modal" @click="openModal">↔</button>
     </header>
 
     <textarea
@@ -90,14 +91,15 @@
     <p v-if="data.systemMessage" class="system-message">{{ data.systemMessage }}</p>
 
     <footer class="actions">
-      <label class="child-count nodrag">
+      <label class="child-count nodrag" title="Leave empty for AI to decide">
         Children
         <input
           type="number"
           min="1"
           max="12"
           :value="data.childCount"
-          @input="update({ childCount: Number($event.target.value) })"
+          :placeholder="data.childCount == null ? 'auto' : ''"
+          @input="onChildCountInput"
         />
       </label>
       <button class="nodrag" :disabled="busy" @click="store.quickAddChild(id)">+ Child</button>
@@ -146,6 +148,8 @@ const props = defineProps({
   data: { type: Object, required: true },
 })
 
+const emit = defineEmits(['open-modal'])
+
 const store = useTreeStore()
 const newTag = ref('')
 const busy = computed(() => store.loadingNodeIds.includes(props.id))
@@ -185,6 +189,15 @@ function completeRelation() {
   store.completeRelation(props.id, label.trim())
 }
 
+function onChildCountInput(event) {
+  const value = event.target.value
+  if (value === '' || value === null) {
+    store.updateNodeData(props.id, { childCount: null })
+  } else {
+    store.updateNodeData(props.id, { childCount: Number(value) })
+  }
+}
+
 function onResizeMove(event) {
   if (!resizeStart) return
 
@@ -209,6 +222,10 @@ function startResize(event) {
   }
   window.addEventListener('pointermove', onResizeMove)
   window.addEventListener('pointerup', stopResize)
+}
+
+function openModal() {
+  emit('open-modal', props.id)
 }
 
 onBeforeUnmount(stopResize)
@@ -250,9 +267,29 @@ onBeforeUnmount(stopResize)
 
 .node-header {
   display: grid;
-  grid-template-columns: 10px 1fr 28px;
+  grid-template-columns: 10px 1fr 28px 28px;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+}
+
+.expand-btn {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.45;
+  transition: opacity 140ms ease, background 140ms ease;
+}
+
+.expand-btn:hover {
+  opacity: 1;
+  background: var(--field);
 }
 
 .status-dot {

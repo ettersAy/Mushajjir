@@ -14,6 +14,7 @@
           <button :class="{ active: tab === 'general' }" @click="tab = 'general'">General</button>
           <button :class="{ active: tab === 'save' }" @click="tab = 'save'">Save</button>
           <button :class="{ active: tab === 'api' }" @click="tab = 'api'">API Keys</button>
+          <button :class="{ active: tab === 'prompts' }" @click="tab = 'prompts'">Prompts</button>
         </aside>
 
         <main class="section">
@@ -86,6 +87,35 @@
 
             <button class="add" @click="settings.addProvider">+ Add custom provider</button>
             <p class="hint">Keys are stored only in this browser localStorage. This is fine for local personal use, but not for a public hosted app.</p>
+          </div>
+
+          <div v-if="tab === 'prompts'" class="api-section">
+            <label>
+              Active divide prompt
+              <select :value="settings.settings.prompts.selectedDividePromptId" @change="settings.selectDividePrompt($event.target.value)">
+                <option v-for="prompt in settings.settings.prompts.dividePrompts" :key="prompt.id" :value="prompt.id">
+                  {{ prompt.name }}
+                </option>
+              </select>
+            </label>
+
+            <div class="provider-card" v-for="prompt in settings.settings.prompts.dividePrompts" :key="prompt.id">
+              <div class="provider-head">
+                <strong>{{ prompt.name }}</strong>
+                <button class="small danger" @click="settings.removeDividePrompt(prompt.id)">Remove</button>
+              </div>
+              <label>
+                Name
+                <input :value="prompt.name" @input="settings.updateDividePrompt(prompt.id, { name: $event.target.value })" />
+              </label>
+              <label>
+                System prompt
+                <textarea class="prompt-textarea" rows="6" :value="prompt.content" @input="settings.updateDividePrompt(prompt.id, { content: $event.target.value })" />
+              </label>
+            </div>
+
+            <button class="add" @click="settings.addDividePrompt">+ Add custom prompt</button>
+            <p class="hint">The active prompt is used when the AI divides a task into child tasks. Customize prompts to match your domain and preferred task-splitting logic.</p>
           </div>
         </main>
       </div>
@@ -216,6 +246,19 @@ select {
   border-radius: 7px;
   background: var(--field);
   font-size: 13px;
+}
+.prompt-textarea {
+  width: 100%;
+  min-height: 100px;
+  border: 0;
+  border-radius: 7px;
+  padding: 10px 11px;
+  background: var(--field);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  resize: vertical;
+  line-height: 1.5;
 }
 @media (max-width: 760px) {
   .content { grid-template-columns: 1fr; }

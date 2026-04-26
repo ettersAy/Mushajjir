@@ -43,17 +43,21 @@ async function callChatCompletion({ provider, messages, temperature = 0.35 }) {
   return content.trim()
 }
 
-export async function divideTask({ provider, node, ancestors, count }) {
+export async function divideTask({ provider, node, ancestors, count, systemPrompt }) {
+  const countInstruction = count != null
+    ? `Divide this task into exactly ${count} focused child tasks.`
+    : 'Divide this task into a reasonable number of child tasks (between 1 and 12) based on the complexity of the work. Decide the count yourself.'
+
   const content = await callChatCompletion({
     provider,
     messages: [
       {
         role: 'system',
-        content: 'You are a senior software architect. Break software work into clear implementation tasks for Laravel, Vue, tests, services, controllers, models, or functions. Return JSON only.',
+        content: systemPrompt || 'You are a senior software architect. Break software work into clear implementation tasks for Laravel, Vue, tests, services, controllers, models, or functions. Return JSON only.',
       },
       {
         role: 'user',
-        content: `Ancestor context:\n${buildContextLine(ancestors)}\n\nCurrent task title: ${node.data.title}\nCurrent task content: ${node.data.content || ''}\n\nDivide this task into ${count} focused child tasks. Return a JSON array only. Each item must be an object with this shape: {"title":"short title","content":"short implementation expectation"}.`,
+        content: `Ancestor context:\n${buildContextLine(ancestors)}\n\nCurrent task title: ${node.data.title}\nCurrent task content: ${node.data.content || ''}\n\n${countInstruction}\nReturn a JSON array only. Each item must be an object with this shape: {"title":"short title","content":"short implementation expectation"}.`,
       },
     ],
   })

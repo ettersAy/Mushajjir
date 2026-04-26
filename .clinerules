@@ -1,0 +1,46 @@
+# Mushajjir — .clinerules
+# This file is read by Cline/Codex agents on every session.
+# It documents project conventions, available tooling, and recurring patterns.
+
+## Project overview
+- Vue 3 + Vite frontend app
+- Pinia for state management
+- Vue Flow for canvas/graph rendering
+- No backend — everything runs in the browser (localStorage)
+
+## Available scripts (package.json)
+- `npm run dev` — start Vite dev server on http://localhost:5173
+- `npm run build` — production build
+- `npm run preview` — preview production build
+
+## Utility scripts (scripts/)
+- `bash scripts/check-build.sh` — runs `vite build` and reports success/failure
+- `bash scripts/create-pr.sh BRANCH "TITLE" [body-file]` — stage, commit, push, create PR
+
+## Git workflow
+- Branch naming: `type/optional-scope-description` (e.g., `feat/api-endpoints`, `fix/canvas-crash`, `chore/deps-update`)
+- Types: `feat`, `fix`, `chore`, `refactor`, `docs`, `test`, `style`
+- PRs target `main`
+- Worktrees: use `git checkout -b branch-name` from detached HEAD
+
+## Before committing / pushing
+1. Run `bash scripts/check-build.sh` to verify the build passes
+2. Stage all changes with `git add -A`
+3. Commit with a conventional commit message
+4. Push and create PR via `bash scripts/create-pr.sh` or manually
+
+## Code conventions
+- Vue: Single File Components with `<script setup>` and `<style scoped>`
+- State: Pinia stores in `src/stores/`, services in `src/services/`
+- New components go in `src/components/`
+- Use `<Teleport to="body">` for modals/overlays
+- For large new files (>6000 chars), use `write_file` tool instead of `editor` + `insert_line` to avoid line-count drift
+- After creating/editing a `.vue` file, verify structure with:
+  `grep -n "</template>|<script|<style>" src/components/YourFile.vue`
+
+## Environment notes
+- `dist/` and `node_modules/` may be symlinks to `/srv/dev/🌳 Mushajjir/` in worktree setups
+- If symlinks are missing, create them:
+  `ln -s /srv/dev/🌳 Mushajjir/dist dist`
+  `ln -s /srv/dev/🌳 Mushajjir/node_modules node_modules`
+- No special `.env` required for development

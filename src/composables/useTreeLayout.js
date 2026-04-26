@@ -41,9 +41,10 @@ export function layoutTree(nodes, hierarchyEdges, rootId = 'root') {
       return nodeWidth(id)
     }
 
-    const childrenWidth = children.reduce((total, childId, index) => (
-      total + measure(childId, seen) + (index > 0 ? siblingGap : 0)
-    ), 0)
+    const childrenWidth = children.reduce(
+      (total, childId, index) => total + measure(childId, seen) + (index > 0 ? siblingGap : 0),
+      0,
+    )
     const width = Math.max(nodeWidth(id), childrenWidth)
     measuredWidths.set(id, width)
     return width
@@ -58,9 +59,10 @@ export function layoutTree(nodes, hierarchyEdges, rootId = 'root') {
     const children = childrenByParent.get(id) || []
     if (!children.length) return
 
-    const totalWidth = children.reduce((total, childId, index) => (
-      total + measure(childId) + (index > 0 ? siblingGap : 0)
-    ), 0)
+    const totalWidth = children.reduce(
+      (total, childId, index) => total + measure(childId) + (index > 0 ? siblingGap : 0),
+      0,
+    )
 
     let cursor = centerX - totalWidth / 2
     for (const childId of children) {

@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "lint": "eslint src/",
+    "format": "prettier --write src/"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "latest",
@@ -18,5 +20,9 @@
     "@vue-flow/minimap": "latest",
     "pinia": "latest"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^10.2.1",
+    "eslint-plugin-vue": "^10.9.0",
+    "prettier": "^3.8.3"
+  }
 }

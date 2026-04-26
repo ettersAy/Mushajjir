@@ -56,9 +56,7 @@ const nodeTypes = {
 }
 const { setCenter } = useVueFlow()
 
-const backgroundColor = computed(() => (
-  settings.settings.general.theme === 'dark' ? '#30343b' : '#d9d5cb'
-))
+const backgroundColor = computed(() => (settings.settings.general.theme === 'dark' ? '#30343b' : '#d9d5cb'))
 
 function focusNode(id) {
   const node = store.nodes.find((item) => item.id === id)
@@ -144,20 +142,31 @@ function onKeydown(event) {
   }
 }
 
-watch(() => settings.settings.general.theme, (theme) => {
-  document.documentElement.dataset.theme = theme || 'light'
-}, { immediate: true })
+watch(
+  () => settings.settings.general.theme,
+  (theme) => {
+    document.documentElement.dataset.theme = theme || 'light'
+  },
+  { immediate: true },
+)
 
-watch(() => store.focusRequest, (request) => {
-  if (!request?.id) return
-  nextTick(() => focusNode(request.id))
-}, { deep: true })
+watch(
+  () => store.focusRequest,
+  (request) => {
+    if (!request?.id) return
+    nextTick(() => focusNode(request.id))
+  },
+  { deep: true },
+)
 
-watch(() => store.firstSearchMatchId, (id) => {
-  if (!id) return
-  store.expandAncestors(id)
-  nextTick(() => focusNode(id))
-})
+watch(
+  () => store.firstSearchMatchId,
+  (id) => {
+    if (!id) return
+    store.expandAncestors(id)
+    nextTick(() => focusNode(id))
+  },
+)
 
 onMounted(() => {
   window.addEventListener('keydown', onKeydown)

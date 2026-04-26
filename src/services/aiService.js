@@ -44,16 +44,19 @@ async function callChatCompletion({ provider, messages, temperature = 0.35 }) {
 }
 
 export async function divideTask({ provider, node, ancestors, count, systemPrompt }) {
-  const countInstruction = count != null
-    ? `Divide this task into exactly ${count} focused child tasks.`
-    : 'Divide this task into a reasonable number of child tasks (between 1 and 12) based on the complexity of the work. Decide the count yourself.'
+  const countInstruction =
+    count != null
+      ? `Divide this task into exactly ${count} focused child tasks.`
+      : 'Divide this task into a reasonable number of child tasks (between 1 and 12) based on the complexity of the work. Decide the count yourself.'
 
   const content = await callChatCompletion({
     provider,
     messages: [
       {
         role: 'system',
-        content: systemPrompt || 'You are a senior software architect. Break software work into clear implementation tasks for Laravel, Vue, tests, services, controllers, models, or functions. Return JSON only.',
+        content:
+          systemPrompt ||
+          'You are a senior software architect. Break software work into clear implementation tasks for Laravel, Vue, tests, services, controllers, models, or functions. Return JSON only.',
       },
       {
         role: 'user',
@@ -78,7 +81,8 @@ export async function reformulateTask({ provider, node, ancestors }) {
     messages: [
       {
         role: 'system',
-        content: 'You improve task specs for AI coding agents. Keep the result concise, concrete, and implementation-focused.',
+        content:
+          'You improve task specs for AI coding agents. Keep the result concise, concrete, and implementation-focused.',
       },
       {
         role: 'user',

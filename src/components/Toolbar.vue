@@ -13,7 +13,7 @@
       placeholder="Search tasks, notes, tags"
     />
 
-    <div class="tag-filters" v-if="store.availableTags.length">
+    <div v-if="store.availableTags.length" class="tag-filters">
       <button
         v-for="tag in store.availableTags"
         :key="tag"
@@ -59,9 +59,7 @@ defineEmits(['open-settings', 'toggle-outline'])
 const store = useTreeStore()
 const settings = useSettingsStore()
 
-const themeLabel = computed(() => (
-  settings.settings.general.theme === 'dark' ? 'Light' : 'Dark'
-))
+const themeLabel = computed(() => (settings.settings.general.theme === 'dark' ? 'Light' : 'Dark'))
 
 function tagStyle(tag) {
   const color = getTagColor(tag)

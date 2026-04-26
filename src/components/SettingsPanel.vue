@@ -21,15 +21,27 @@
           <div v-if="tab === 'general'" class="form-grid">
             <label>
               App name
-              <input :value="settings.settings.general.appName" @input="settings.updateGeneral({ appName: $event.target.value })" />
+              <input
+                :value="settings.settings.general.appName"
+                @input="settings.updateGeneral({ appName: $event.target.value })"
+              />
             </label>
             <label>
               Default children
-              <input type="number" min="1" max="12" :value="settings.settings.general.defaultChildCount" @input="settings.updateGeneral({ defaultChildCount: Number($event.target.value) })" />
+              <input
+                type="number"
+                min="1"
+                max="12"
+                :value="settings.settings.general.defaultChildCount"
+                @input="settings.updateGeneral({ defaultChildCount: Number($event.target.value) })"
+              />
             </label>
             <label>
               Theme
-              <select :value="settings.settings.general.theme" @change="settings.updateGeneral({ theme: $event.target.value })">
+              <select
+                :value="settings.settings.general.theme"
+                @change="settings.updateGeneral({ theme: $event.target.value })"
+              >
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
               </select>
@@ -39,83 +51,127 @@
           <div v-if="tab === 'save'" class="form-grid">
             <label>
               Folder path note
-              <input :value="settings.settings.save.folderPath" placeholder="Example: ~/Documents/mushajjir" @input="settings.updateSave({ folderPath: $event.target.value })" />
+              <input
+                :value="settings.settings.save.folderPath"
+                placeholder="Example: ~/Documents/mushajjir"
+                @input="settings.updateSave({ folderPath: $event.target.value })"
+              />
             </label>
             <label>
               Preferred export format
-              <select :value="settings.settings.save.format" @change="settings.updateSave({ format: $event.target.value })">
+              <select
+                :value="settings.settings.save.format"
+                @change="settings.updateSave({ format: $event.target.value })"
+              >
                 <option value="md">Markdown</option>
                 <option value="txt">Text</option>
                 <option value="json">JSON</option>
               </select>
             </label>
-            <p class="hint">Browser apps cannot write directly to a local folder without a backend or file picker permission. This is saved as your preferred destination note for now.</p>
+            <p class="hint">
+              Browser apps cannot write directly to a local folder without a backend or file picker permission. This is
+              saved as your preferred destination note for now.
+            </p>
           </div>
 
           <div v-if="tab === 'api'" class="api-section">
             <label>
               Active provider
-              <select :value="settings.settings.ai.selectedProviderId" @change="settings.selectProvider($event.target.value)">
+              <select
+                :value="settings.settings.ai.selectedProviderId"
+                @change="settings.selectProvider($event.target.value)"
+              >
                 <option v-for="provider in settings.settings.ai.providers" :key="provider.id" :value="provider.id">
                   {{ provider.name }} — {{ provider.model || 'no model' }}
                 </option>
               </select>
             </label>
 
-            <div class="provider-card" v-for="provider in settings.settings.ai.providers" :key="provider.id">
+            <div v-for="provider in settings.settings.ai.providers" :key="provider.id" class="provider-card">
               <div class="provider-head">
                 <strong>{{ provider.name }}</strong>
                 <button class="small danger" @click="settings.removeProvider(provider.id)">Remove</button>
               </div>
               <label>
                 Name
-                <input :value="provider.name" @input="settings.updateProvider(provider.id, { name: $event.target.value })" />
+                <input
+                  :value="provider.name"
+                  @input="settings.updateProvider(provider.id, { name: $event.target.value })"
+                />
               </label>
               <label>
                 API key
-                <input type="password" :value="provider.apiKey" placeholder="sk-..." @input="settings.updateProvider(provider.id, { apiKey: $event.target.value })" />
+                <input
+                  type="password"
+                  :value="provider.apiKey"
+                  placeholder="sk-..."
+                  @input="settings.updateProvider(provider.id, { apiKey: $event.target.value })"
+                />
               </label>
               <label>
                 API URL
-                <input :value="provider.baseUrl" @input="settings.updateProvider(provider.id, { baseUrl: $event.target.value })" />
+                <input
+                  :value="provider.baseUrl"
+                  @input="settings.updateProvider(provider.id, { baseUrl: $event.target.value })"
+                />
               </label>
               <label>
                 Model
-                <input :value="provider.model" @input="settings.updateProvider(provider.id, { model: $event.target.value })" />
+                <input
+                  :value="provider.model"
+                  @input="settings.updateProvider(provider.id, { model: $event.target.value })"
+                />
               </label>
             </div>
 
             <button class="add" @click="settings.addProvider">+ Add custom provider</button>
-            <p class="hint">Keys are stored only in this browser localStorage. This is fine for local personal use, but not for a public hosted app.</p>
+            <p class="hint">
+              Keys are stored only in this browser localStorage. This is fine for local personal use, but not for a
+              public hosted app.
+            </p>
           </div>
 
           <div v-if="tab === 'prompts'" class="api-section">
             <label>
               Active divide prompt
-              <select :value="settings.settings.prompts.selectedDividePromptId" @change="settings.selectDividePrompt($event.target.value)">
+              <select
+                :value="settings.settings.prompts.selectedDividePromptId"
+                @change="settings.selectDividePrompt($event.target.value)"
+              >
                 <option v-for="prompt in settings.settings.prompts.dividePrompts" :key="prompt.id" :value="prompt.id">
                   {{ prompt.name }}
                 </option>
               </select>
             </label>
 
-            <div class="provider-card" v-for="prompt in settings.settings.prompts.dividePrompts" :key="prompt.id">
+            <div v-for="prompt in settings.settings.prompts.dividePrompts" :key="prompt.id" class="provider-card">
               <div class="provider-head">
                 <strong>{{ prompt.name }}</strong>
                 <button class="small danger" @click="settings.removeDividePrompt(prompt.id)">Remove</button>
               </div>
               <label>
                 Name
-                <input :value="prompt.name" @input="settings.updateDividePrompt(prompt.id, { name: $event.target.value })" />
+                <input
+                  :value="prompt.name"
+                  @input="settings.updateDividePrompt(prompt.id, { name: $event.target.value })"
+                />
               </label>
               <label>
                 System prompt
-                <textarea class="prompt-textarea" rows="6" :value="prompt.content" @input="settings.updateDividePrompt(prompt.id, { content: $event.target.value })" />
+                <textarea
+                  class="prompt-textarea"
+                  rows="6"
+                  :value="prompt.content"
+                  @input="settings.updateDividePrompt(prompt.id, { content: $event.target.value })"
+                />
               </label>
             </div>
 
             <button class="add" @click="settings.addDividePrompt">+ Add custom prompt</button>
-            <p class="hint">The active prompt is used when the AI divides a task into child tasks. Customize prompts to match your domain and preferred task-splitting logic.</p>
+            <p class="hint">
+              The active prompt is used when the AI divides a task into child tasks. Customize prompts to match your
+              domain and preferred task-splitting logic.
+            </p>
           </div>
         </main>
       </div>
@@ -160,8 +216,13 @@ const settings = useSettingsStore()
   padding: 18px 20px;
   border-bottom: 1px solid var(--panel-border);
 }
-h2 { margin: 0; }
-p { margin: 4px 0 0; color: var(--muted); }
+h2 {
+  margin: 0;
+}
+p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
 .icon {
   width: 38px;
   height: 38px;
@@ -197,7 +258,10 @@ p { margin: 4px 0 0; color: var(--muted); }
   text-align: left;
 }
 .tabs button.active,
-.add { background: var(--button); color: var(--button-text); }
+.add {
+  background: var(--button);
+  color: var(--button-text);
+}
 .section {
   overflow: auto;
   padding: 18px;
@@ -240,7 +304,9 @@ select {
   padding: 7px 9px;
   font-size: 12px;
 }
-.danger { background: var(--danger); }
+.danger {
+  background: var(--danger);
+}
 .hint {
   padding: 10px 12px;
   border-radius: 7px;
@@ -261,7 +327,14 @@ select {
   line-height: 1.5;
 }
 @media (max-width: 760px) {
-  .content { grid-template-columns: 1fr; }
-  .tabs { flex-direction: row; border-right: 0; border-bottom: 1px solid var(--panel-border); overflow-x: auto; }
+  .content {
+    grid-template-columns: 1fr;
+  }
+  .tabs {
+    flex-direction: row;
+    border-right: 0;
+    border-bottom: 1px solid var(--panel-border);
+    overflow-x: auto;
+  }
 }
 </style>

@@ -50,7 +50,8 @@ function defaultTree() {
     position: { x: 120, y: 120 },
     data: {
       title: 'Implement user management',
-      content: 'Break this feature into backend, frontend, and verification tasks that an AI coding agent can execute safely.',
+      content:
+        'Break this feature into backend, frontend, and verification tasks that an AI coding agent can execute safely.',
       tags: ['ai-generated'],
       taskStatus: 'in-progress',
       width: 340,
@@ -130,17 +131,16 @@ export const useTreeStore = defineStore('tree', () => {
     const query = searchQuery.value.trim().toLowerCase()
     if (!query) return new Set()
 
-    return new Set(nodes.value
-      .filter((node) => {
-        const searchable = [
-          node.data.title,
-          node.data.content,
-          node.data.notes,
-          ...(node.data.tags || []),
-        ].join(' ').toLowerCase()
-        return searchable.includes(query)
-      })
-      .map((node) => node.id))
+    return new Set(
+      nodes.value
+        .filter((node) => {
+          const searchable = [node.data.title, node.data.content, node.data.notes, ...(node.data.tags || [])]
+            .join(' ')
+            .toLowerCase()
+          return searchable.includes(query)
+        })
+        .map((node) => node.id),
+    )
   })
 
   const firstSearchMatchId = computed(() => Array.from(matchingNodeIds.value)[0] || null)
@@ -196,11 +196,7 @@ export const useTreeStore = defineStore('tree', () => {
     const id = selectedNodeId.value
     if (!id) return new Set()
 
-    return new Set([
-      ...ancestorIds(id, parentByChild.value),
-      id,
-      ...descendantIds(id, childrenByParent.value),
-    ])
+    return new Set([...ancestorIds(id, parentByChild.value), id, ...descendantIds(id, childrenByParent.value)])
   })
 
   const progressByNode = computed(() => {
@@ -227,52 +223,55 @@ export const useTreeStore = defineStore('tree', () => {
     return cache
   })
 
-  const flowNodes = computed(() => nodes.value.map((node) => {
-    const visible = visibleNodeIds.value.has(node.id)
-    const isSearchActive = Boolean(searchQuery.value.trim())
-    const isSearchMatch = matchingNodeIds.value.has(node.id)
-    const isSearchContext = searchContextIds.value.has(node.id)
-    const isFocusDimmed = focusMode.value && selectedNodeId.value && !focusedBranchIds.value.has(node.id)
-    const isSearchDimmed = isSearchActive && !isSearchMatch && !isSearchContext
+  const flowNodes = computed(() =>
+    nodes.value.map((node) => {
+      const visible = visibleNodeIds.value.has(node.id)
+      const isSearchActive = Boolean(searchQuery.value.trim())
+      const isSearchMatch = matchingNodeIds.value.has(node.id)
+      const isSearchContext = searchContextIds.value.has(node.id)
+      const isFocusDimmed = focusMode.value && selectedNodeId.value && !focusedBranchIds.value.has(node.id)
+      const isSearchDimmed = isSearchActive && !isSearchMatch && !isSearchContext
 
-    return {
-      ...node,
-      hidden: !visible,
-      selected: selectedNodeId.value === node.id,
-      data: {
-        ...node.data,
-        progress: progressByNode.value.get(node.id) || 0,
-        actualChildCount: childrenByParent.value.get(node.id)?.length || 0,
-        hiddenDescendantCount: node.data.collapsed
-          ? descendantIds(node.id, childrenByParent.value).length
-          : 0,
-        searchMatch: isSearchMatch,
-        dimmed: Boolean(isFocusDimmed || isSearchDimmed),
-        relationDraftSourceId: relationDraftSourceId.value,
-      },
-    }
-  }))
+      return {
+        ...node,
+        hidden: !visible,
+        selected: selectedNodeId.value === node.id,
+        data: {
+          ...node.data,
+          progress: progressByNode.value.get(node.id) || 0,
+          actualChildCount: childrenByParent.value.get(node.id)?.length || 0,
+          hiddenDescendantCount: node.data.collapsed ? descendantIds(node.id, childrenByParent.value).length : 0,
+          searchMatch: isSearchMatch,
+          dimmed: Boolean(isFocusDimmed || isSearchDimmed),
+          relationDraftSourceId: relationDraftSourceId.value,
+        },
+      }
+    }),
+  )
 
-  const flowEdges = computed(() => edges.value.map((edge) => {
-    const kind = edge.data?.kind || 'hierarchy'
-    const sourceVisible = visibleNodeIds.value.has(edge.source)
-    const targetVisible = visibleNodeIds.value.has(edge.target)
-    const dimmed = focusMode.value
-      && selectedNodeId.value
-      && (!focusedBranchIds.value.has(edge.source) || !focusedBranchIds.value.has(edge.target))
+  const flowEdges = computed(() =>
+    edges.value.map((edge) => {
+      const kind = edge.data?.kind || 'hierarchy'
+      const sourceVisible = visibleNodeIds.value.has(edge.source)
+      const targetVisible = visibleNodeIds.value.has(edge.target)
+      const dimmed =
+        focusMode.value &&
+        selectedNodeId.value &&
+        (!focusedBranchIds.value.has(edge.source) || !focusedBranchIds.value.has(edge.target))
 
-    return {
-      ...edge,
-      label: kind === 'relation' ? (edge.data?.label || edge.label || '') : edge.label,
-      hidden: !sourceVisible || !targetVisible,
-      animated: kind === 'hierarchy' && loadingNodeIds.value.includes(edge.source),
-      style: {
-        ...(kind === 'relation' ? RELATION_EDGE_STYLE : HIERARCHY_EDGE_STYLE),
-        opacity: dimmed ? 0.16 : 1,
-      },
-      class: kind === 'relation' ? 'edge-relation' : 'edge-hierarchy',
-    }
-  }))
+      return {
+        ...edge,
+        label: kind === 'relation' ? edge.data?.label || edge.label || '' : edge.label,
+        hidden: !sourceVisible || !targetVisible,
+        animated: kind === 'hierarchy' && loadingNodeIds.value.includes(edge.source),
+        style: {
+          ...(kind === 'relation' ? RELATION_EDGE_STYLE : HIERARCHY_EDGE_STYLE),
+          opacity: dimmed ? 0.16 : 1,
+        },
+        class: kind === 'relation' ? 'edge-relation' : 'edge-hierarchy',
+      }
+    }),
+  )
 
   const outlineRows = computed(() => {
     const rows = []
@@ -307,9 +306,13 @@ export const useTreeStore = defineStore('tree', () => {
     return rows
   })
 
-  watch([nodes, edges], () => {
-    saveTree({ nodes: nodes.value, edges: edges.value })
-  }, { deep: true })
+  watch(
+    [nodes, edges],
+    () => {
+      saveTree({ nodes: nodes.value, edges: edges.value })
+    },
+    { deep: true },
+  )
 
   if (typeof window !== 'undefined') {
     window.addEventListener('beforeunload', () => {
@@ -423,10 +426,13 @@ export const useTreeStore = defineStore('tree', () => {
     if (!parent) return
 
     const count = clamp(Number(parent.data.childCount || 4), 1, 12)
-    createChildNodes(parentId, Array.from({ length: count }, (_, index) => ({
-      title: `Child task ${index + 1}`,
-      content: '',
-    })))
+    createChildNodes(
+      parentId,
+      Array.from({ length: count }, (_, index) => ({
+        title: `Child task ${index + 1}`,
+        content: '',
+      })),
+    )
   }
 
   function quickAddChild(parentId) {
@@ -547,9 +553,9 @@ export const useTreeStore = defineStore('tree', () => {
   function createRelationFromConnection(connection) {
     if (!connection.source || !connection.target || connection.source === connection.target) return
 
-    const hierarchyExists = hierarchyEdges.value.some((edge) => (
-      edge.source === connection.source && edge.target === connection.target
-    ))
+    const hierarchyExists = hierarchyEdges.value.some(
+      (edge) => edge.source === connection.source && edge.target === connection.target,
+    )
     if (hierarchyExists) return
 
     edges.value = [...edges.value, createRelationEdge(connection.source, connection.target)]
@@ -646,11 +652,15 @@ export const useTreeStore = defineStore('tree', () => {
   }
 
   function exportTree() {
-    return JSON.stringify({
-      schemaVersion: 2,
-      exportedAt: new Date().toISOString(),
-      tree: { nodes: nodes.value, edges: edges.value },
-    }, null, 2)
+    return JSON.stringify(
+      {
+        schemaVersion: 2,
+        exportedAt: new Date().toISOString(),
+        tree: { nodes: nodes.value, edges: edges.value },
+      },
+      null,
+      2,
+    )
   }
 
   function exportMarkdown() {

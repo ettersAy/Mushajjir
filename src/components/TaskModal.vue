@@ -50,12 +50,7 @@
           <div class="field-group">
             <label>Tags</label>
             <div class="tags-row">
-              <span
-                v-for="tag in node.data.tags"
-                :key="tag"
-                class="modal-tag"
-                :style="tagStyle(tag)"
-              >
+              <span v-for="tag in node.data.tags" :key="tag" class="modal-tag" :style="tagStyle(tag)">
                 {{ tag }}
                 <button class="tag-remove" @click="store.removeTag(node.id, tag)">x</button>
               </span>
@@ -77,6 +72,7 @@
               placeholder="Markdown notes..."
               @input="update({ notes: $event.target.value })"
             />
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-if="node.data.notes" class="markdown-preview" v-html="notesHtml" />
           </div>
 

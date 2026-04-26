@@ -33,11 +33,14 @@ export function saveTreeNow(payload) {
   if (!local) return
 
   const normalized = normalizeTree(payload)
-  local.setItem(STORAGE_KEY, JSON.stringify({
-    schemaVersion: SCHEMA_VERSION,
-    savedAt: new Date().toISOString(),
-    tree: normalized,
-  }))
+  local.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      schemaVersion: SCHEMA_VERSION,
+      savedAt: new Date().toISOString(),
+      tree: normalized,
+    }),
+  )
 }
 
 export function saveTree(payload) {

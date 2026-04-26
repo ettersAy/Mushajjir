@@ -113,10 +113,18 @@ header span {
   background: var(--muted);
 }
 
-.status-todo { background: #9ca3af; }
-.status-in-progress { background: #2563eb; }
-.status-blocked { background: #dc2626; }
-.status-done { background: #16a34a; }
+.status-todo {
+  background: #9ca3af;
+}
+.status-in-progress {
+  background: #2563eb;
+}
+.status-blocked {
+  background: #dc2626;
+}
+.status-done {
+  background: #16a34a;
+}
 
 .title {
   overflow: hidden;

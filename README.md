@@ -31,6 +31,21 @@ npm run build
 npm run preview
 ```
 
+## Code Quality
+
+This project uses ESLint (with the Vue 3 plugin) and Prettier to catch errors early and enforce consistent formatting.
+
+```bash
+# Lint source files
+npm run lint
+
+# Auto-fix lint issues
+npm run lint -- --fix
+
+# Format source files with Prettier
+npm run format
+```
+
 ## Next good features
 
 - AI Divide button

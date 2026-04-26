@@ -21,7 +21,11 @@
         placeholder="Task title"
         @input="update({ title: $event.target.value })"
       />
-      <button class="icon-button nodrag" :title="data.collapsed ? 'Expand' : 'Collapse'" @click="store.toggleCollapse(id)">
+      <button
+        class="icon-button nodrag"
+        :title="data.collapsed ? 'Expand' : 'Collapse'"
+        @click="store.toggleCollapse(id)"
+      >
         {{ data.collapsed ? '+' : '-' }}
       </button>
       <button class="expand-btn nodrag" title="Open in modal" @click="openModal">↔</button>
@@ -51,12 +55,7 @@
     </div>
 
     <div class="tags">
-      <span
-        v-for="tag in data.tags"
-        :key="tag"
-        class="tag"
-        :style="tagStyle(tag)"
-      >
+      <span v-for="tag in data.tags" :key="tag" class="tag" :style="tagStyle(tag)">
         {{ tag }}
         <button class="tag-remove nodrag" @click="store.removeTag(id, tag)">x</button>
       </span>
@@ -70,9 +69,7 @@
     </div>
 
     <section class="notes">
-      <button class="notes-toggle nodrag" @click="update({ notesOpen: !data.notesOpen })">
-        Notes
-      </button>
+      <button class="notes-toggle nodrag" @click="update({ notesOpen: !data.notesOpen })">Notes</button>
       <div v-if="data.notesOpen" class="notes-body">
         <textarea
           class="notes-input nodrag"
@@ -80,6 +77,7 @@
           placeholder="Markdown notes..."
           @input="update({ notes: $event.target.value })"
         />
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <div v-if="data.notes" class="markdown-preview" v-html="notesHtml" />
       </div>
     </section>
@@ -106,31 +104,14 @@
       <button class="nodrag" :disabled="busy" @click="store.aiDivide(id)">AI</button>
       <button class="nodrag secondary" :disabled="busy" @click="store.aiReformulate(id)">Refine</button>
       <button class="nodrag secondary" :disabled="busy" @click="store.duplicateNode(id)">Duplicate</button>
-      <button
-        v-if="canCompleteRelation"
-        class="nodrag relation"
-        @click="completeRelation"
-      >
-        Connect
-      </button>
-      <button
-        v-else
-        class="nodrag relation"
-        :class="{ active: isRelationSource }"
-        @click="store.beginRelation(id)"
-      >
+      <button v-if="canCompleteRelation" class="nodrag relation" @click="completeRelation">Connect</button>
+      <button v-else class="nodrag relation" :class="{ active: isRelationSource }" @click="store.beginRelation(id)">
         {{ isRelationSource ? 'Cancel link' : 'Link' }}
       </button>
-      <button v-if="id !== 'root'" class="nodrag danger" :disabled="busy" @click="store.deleteNode(id)">
-        Delete
-      </button>
+      <button v-if="id !== 'root'" class="nodrag danger" :disabled="busy" @click="store.deleteNode(id)">Delete</button>
     </footer>
 
-    <button
-      class="resizer nodrag"
-      title="Resize"
-      @pointerdown.stop.prevent="startResize"
-    />
+    <button class="resizer nodrag" title="Resize" @pointerdown.stop.prevent="startResize" />
 
     <Handle type="source" :position="Position.Bottom" />
   </article>
@@ -154,9 +135,9 @@ const store = useTreeStore()
 const newTag = ref('')
 const busy = computed(() => store.loadingNodeIds.includes(props.id))
 const isRelationSource = computed(() => props.data.relationDraftSourceId === props.id)
-const canCompleteRelation = computed(() => (
-  props.data.relationDraftSourceId && props.data.relationDraftSourceId !== props.id
-))
+const canCompleteRelation = computed(
+  () => props.data.relationDraftSourceId && props.data.relationDraftSourceId !== props.id,
+)
 const notesHtml = computed(() => renderMarkdown(props.data.notes))
 const nodeStyle = computed(() => ({
   width: `${props.data.width || 320}px`,
@@ -242,7 +223,11 @@ onBeforeUnmount(stopResize)
   background: var(--node);
   box-shadow: var(--shadow);
   color: var(--text);
-  transition: box-shadow 160ms ease, opacity 160ms ease, transform 160ms ease, border-color 160ms ease;
+  transition:
+    box-shadow 160ms ease,
+    opacity 160ms ease,
+    transform 160ms ease,
+    border-color 160ms ease;
 }
 
 .task-node:hover {
@@ -254,7 +239,9 @@ onBeforeUnmount(stopResize)
 }
 
 .task-node.matched {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 24%, transparent), var(--shadow-strong);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent) 24%, transparent),
+    var(--shadow-strong);
 }
 
 .task-node.dimmed {
@@ -284,7 +271,9 @@ onBeforeUnmount(stopResize)
   cursor: pointer;
   font-size: 14px;
   opacity: 0.45;
-  transition: opacity 140ms ease, background 140ms ease;
+  transition:
+    opacity 140ms ease,
+    background 140ms ease;
 }
 
 .expand-btn:hover {
@@ -299,10 +288,18 @@ onBeforeUnmount(stopResize)
   background: var(--muted);
 }
 
-.status-todo { background: #9ca3af; }
-.status-in-progress { background: #2563eb; }
-.status-blocked { background: #dc2626; }
-.status-done { background: #16a34a; }
+.status-todo {
+  background: #9ca3af;
+}
+.status-in-progress {
+  background: #2563eb;
+}
+.status-blocked {
+  background: #dc2626;
+}
+.status-done {
+  background: #16a34a;
+}
 
 .title,
 .content,

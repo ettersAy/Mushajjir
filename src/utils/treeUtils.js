@@ -40,7 +40,11 @@ export function getTagColor(tag) {
 }
 
 export function cleanTag(tag) {
-  return String(tag || '').trim().toLowerCase().replace(/\s+/g, '-').slice(0, 28)
+  return String(tag || '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .slice(0, 28)
 }
 
 export function normalizeNodeData(data = {}) {
@@ -67,7 +71,7 @@ export function normalizeNode(node) {
   return {
     ...node,
     id: node.id || makeId('node'),
-    type: node.type === 'sticky' ? 'task' : (node.type || 'task'),
+    type: node.type === 'sticky' ? 'task' : node.type || 'task',
     position: node.position || { x: 0, y: 0 },
     data: normalizeNodeData(node.data || {}),
   }
@@ -100,11 +104,11 @@ export function normalizeEdge(edge) {
     ...edge,
     id: edge.id || makeId(kind === 'relation' ? 'relation' : 'edge'),
     type: edge.type || 'smoothstep',
-    label: kind === 'relation' ? (edge.label || edge.data?.label || '') : edge.label,
+    label: kind === 'relation' ? edge.label || edge.data?.label || '' : edge.label,
     data: {
       ...(edge.data || {}),
       kind,
-      label: kind === 'relation' ? (edge.label || edge.data?.label || '') : edge.data?.label,
+      label: kind === 'relation' ? edge.label || edge.data?.label || '' : edge.data?.label,
     },
   }
 }
@@ -113,9 +117,7 @@ export function normalizeTree(payload) {
   const nodes = Array.isArray(payload?.nodes) ? payload.nodes.map(normalizeNode) : []
   const knownNodeIds = new Set(nodes.map((node) => node.id))
   const edges = Array.isArray(payload?.edges)
-    ? payload.edges
-      .filter((edge) => knownNodeIds.has(edge.source) && knownNodeIds.has(edge.target))
-      .map(normalizeEdge)
+    ? payload.edges.filter((edge) => knownNodeIds.has(edge.source) && knownNodeIds.has(edge.target)).map(normalizeEdge)
     : []
 
   return { nodes, edges }

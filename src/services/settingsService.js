@@ -4,22 +4,26 @@ export const DEFAULT_DIVIDE_PROMPTS = [
   {
     id: 'coding-default',
     name: 'Coding — Default',
-    content: 'You are a senior software architect. Break software work into clear implementation tasks for Laravel, Vue, tests, services, controllers, models, or functions. Return JSON only.',
+    content:
+      'You are a senior software architect. Break software work into clear implementation tasks for Laravel, Vue, tests, services, controllers, models, or functions. Return JSON only.',
   },
   {
     id: 'coding-detailed',
     name: 'Coding — Detailed specs',
-    content: 'You are a senior software architect. Break the software work into detailed atomic implementation tasks. Each task must include specific file names, method signatures, and test expectations when relevant. Target Laravel + Vue + Inertia stack. Return JSON only.',
+    content:
+      'You are a senior software architect. Break the software work into detailed atomic implementation tasks. Each task must include specific file names, method signatures, and test expectations when relevant. Target Laravel + Vue + Inertia stack. Return JSON only.',
   },
   {
     id: 'coding-tdd',
     name: 'Coding — TDD first',
-    content: 'You are a senior software architect following Test-Driven Development. Break the work into tasks where tests are defined first (red), then implementation (green), then refactoring. Return JSON only.',
+    content:
+      'You are a senior software architect following Test-Driven Development. Break the work into tasks where tests are defined first (red), then implementation (green), then refactoring. Return JSON only.',
   },
   {
     id: 'coding-micro',
     name: 'Coding — Micro tasks',
-    content: 'You are a senior software architect. Break the work into very small, granular tasks suitable for LLM coding agents with limited context. Each task should be completable in a single code edit session (under 50 lines of code). Prefer more, smaller tasks over fewer larger ones. Return JSON only.',
+    content:
+      'You are a senior software architect. Break the work into very small, granular tasks suitable for LLM coding agents with limited context. Each task should be completable in a single code edit session (under 50 lines of code). Prefer more, smaller tasks over fewer larger ones. Return JSON only.',
   },
 ]
 
@@ -102,9 +106,7 @@ function mergeDividePrompts(savedPrompts) {
     ...(savedPrompts.find((item) => item.id === prompt.id) || {}),
   }))
 
-  const customPrompts = savedPrompts.filter(
-    (prompt) => !DEFAULT_DIVIDE_PROMPTS.some((item) => item.id === prompt.id),
-  )
+  const customPrompts = savedPrompts.filter((prompt) => !DEFAULT_DIVIDE_PROMPTS.some((item) => item.id === prompt.id))
 
   return [...defaults, ...customPrompts]
 }

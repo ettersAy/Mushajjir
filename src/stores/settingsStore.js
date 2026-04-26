@@ -3,7 +3,12 @@ import { computed, ref, watch } from 'vue'
 import { loadSettings, saveSettings } from '../services/settingsService'
 
 function makeProviderId(name) {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `provider-${Date.now()}`
+  return (
+    name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '') || `provider-${Date.now()}`
+  )
 }
 
 export const useSettingsStore = defineStore('settings', () => {
@@ -11,10 +16,11 @@ export const useSettingsStore = defineStore('settings', () => {
 
   watch(settings, () => saveSettings(settings.value), { deep: true })
 
-  const selectedProvider = computed(() => (
-    settings.value.ai.providers.find((provider) => provider.id === settings.value.ai.selectedProviderId)
-    || settings.value.ai.providers[0]
-  ))
+  const selectedProvider = computed(
+    () =>
+      settings.value.ai.providers.find((provider) => provider.id === settings.value.ai.selectedProviderId) ||
+      settings.value.ai.providers[0],
+  )
 
   function updateGeneral(patch) {
     settings.value.general = { ...settings.value.general, ...patch }
@@ -33,9 +39,9 @@ export const useSettingsStore = defineStore('settings', () => {
   }
 
   function updateProvider(id, patch) {
-    settings.value.ai.providers = settings.value.ai.providers.map((provider) => (
-      provider.id === id ? { ...provider, ...patch } : provider
-    ))
+    settings.value.ai.providers = settings.value.ai.providers.map((provider) =>
+      provider.id === id ? { ...provider, ...patch } : provider,
+    )
   }
 
   function addProvider() {
@@ -58,20 +64,23 @@ export const useSettingsStore = defineStore('settings', () => {
     }
   }
 
-  const activeDividePrompt = computed(() => (
-    settings.value.prompts.dividePrompts.find((prompt) => prompt.id === settings.value.prompts.selectedDividePromptId)
-    || settings.value.prompts.dividePrompts[0]
-    || null
-  ))
+  const activeDividePrompt = computed(
+    () =>
+      settings.value.prompts.dividePrompts.find(
+        (prompt) => prompt.id === settings.value.prompts.selectedDividePromptId,
+      ) ||
+      settings.value.prompts.dividePrompts[0] ||
+      null,
+  )
 
   function selectDividePrompt(id) {
     settings.value.prompts.selectedDividePromptId = id
   }
 
   function updateDividePrompt(id, patch) {
-    settings.value.prompts.dividePrompts = settings.value.prompts.dividePrompts.map((prompt) => (
-      prompt.id === id ? { ...prompt, ...patch } : prompt
-    ))
+    settings.value.prompts.dividePrompts = settings.value.prompts.dividePrompts.map((prompt) =>
+      prompt.id === id ? { ...prompt, ...patch } : prompt,
+    )
   }
 
   function addDividePrompt() {

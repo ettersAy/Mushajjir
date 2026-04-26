@@ -52,7 +52,6 @@ function defaultTree() {
       title: 'Implement user management',
       content: 'Break this feature into backend, frontend, and verification tasks that an AI coding agent can execute safely.',
       tags: ['ai-generated'],
-      childCount: 4,
       taskStatus: 'in-progress',
       width: 340,
     },
@@ -404,7 +403,6 @@ export const useTreeStore = defineStore('tree', () => {
           content: payload.content || payload.description || '',
           tags: Array.isArray(payload.tags) ? payload.tags : [],
           taskStatus: payload.taskStatus || 'todo',
-          childCount: 4,
         },
       })
     })
@@ -581,15 +579,18 @@ export const useTreeStore = defineStore('tree', () => {
     if (!parent) return
 
     const settingsStore = useSettingsStore()
-    const count = clamp(Number(parent.data.childCount || 4), 3, 8)
+    const raw = parent.data.childCount
+    const count = raw != null ? clamp(Number(raw), 3, 8) : null
 
     try {
       setNodeBusy(parentId, true)
+      const activePrompt = settingsStore.activeDividePrompt
       const tasks = await divideTask({
         provider: settingsStore.selectedProvider,
         node: parent,
         ancestors: ancestorNodes(parentId).map((node) => node.data),
         count,
+        systemPrompt: activePrompt?.content || undefined,
       })
       createChildNodes(parentId, tasks)
       updateNodeData(parentId, { systemMessage: '' })

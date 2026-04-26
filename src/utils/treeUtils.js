@@ -53,7 +53,7 @@ export function normalizeNodeData(data = {}) {
     notes: data.notes || '',
     notesOpen: Boolean(data.notesOpen),
     tags: Array.isArray(data.tags) ? data.tags.map(cleanTag).filter(Boolean) : [],
-    childCount: clamp(Number(data.childCount || 4), 1, 12),
+    childCount: data.childCount != null ? clamp(Number(data.childCount), 1, 12) : null,
     parentId: data.parentId ?? null,
     taskStatus: data.taskStatus || (oldStatusIsTaskState ? oldStatus : 'todo'),
     systemMessage: data.systemMessage || (!oldStatusIsTaskState ? oldStatus : ''),

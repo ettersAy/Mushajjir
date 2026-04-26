@@ -58,9 +58,44 @@ export const useSettingsStore = defineStore('settings', () => {
     }
   }
 
+  const activeDividePrompt = computed(() => (
+    settings.value.prompts.dividePrompts.find((prompt) => prompt.id === settings.value.prompts.selectedDividePromptId)
+    || settings.value.prompts.dividePrompts[0]
+    || null
+  ))
+
+  function selectDividePrompt(id) {
+    settings.value.prompts.selectedDividePromptId = id
+  }
+
+  function updateDividePrompt(id, patch) {
+    settings.value.prompts.dividePrompts = settings.value.prompts.dividePrompts.map((prompt) => (
+      prompt.id === id ? { ...prompt, ...patch } : prompt
+    ))
+  }
+
+  function addDividePrompt() {
+    const id = `custom-prompt-${Date.now()}`
+    settings.value.prompts.dividePrompts.push({
+      id,
+      name: 'Custom prompt',
+      content: 'You are a senior software architect. Break the work into clear tasks. Return JSON only.',
+    })
+    settings.value.prompts.selectedDividePromptId = id
+  }
+
+  function removeDividePrompt(id) {
+    if (settings.value.prompts.dividePrompts.length <= 1) return
+    settings.value.prompts.dividePrompts = settings.value.prompts.dividePrompts.filter((prompt) => prompt.id !== id)
+    if (settings.value.prompts.selectedDividePromptId === id) {
+      settings.value.prompts.selectedDividePromptId = settings.value.prompts.dividePrompts[0]?.id || ''
+    }
+  }
+
   return {
     settings,
     selectedProvider,
+    activeDividePrompt,
     updateGeneral,
     updateSave,
     toggleTheme,
@@ -68,5 +103,9 @@ export const useSettingsStore = defineStore('settings', () => {
     updateProvider,
     addProvider,
     removeProvider,
+    selectDividePrompt,
+    updateDividePrompt,
+    addDividePrompt,
+    removeDividePrompt,
   }
 })

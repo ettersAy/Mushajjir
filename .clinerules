@@ -1,0 +1,38 @@
+# Mushajjir — CLI Agent Rules
+
+## Project Overview
+- Vue 3 + Vite + Pinia SPA
+- Vue Flow canvas for node-based tree editing
+- localStorage-based persistence (no backend)
+- AI integration via OpenAI-compatible APIs (OpenRouter, DeepSeek, Grok)
+
+## Conventions
+
+### Code Style
+- Use `eslint.config.js` (flat config) — ESLint v10 no longer supports `.eslintrc.*`
+- Run `npm run lint` before committing; 0 errors required
+- Run `npm run format` (Prettier) before committing
+- Semi: false, singleQuote: true, trailingComma: all, printWidth: 120
+- Self-closing void elements (`<input/>`) are used consistently — `vue/html-self-closing` is disabled
+- Intentional `v-html` usage (markdown rendering) must be preceded by `<!-- eslint-disable-next-line vue/no-v-html -->`
+
+### Git Workflow
+- Local repo uses git worktrees — check `git remote -v` and `git log --oneline -3` before assuming state
+- Always `git fetch origin` first and check `git log --oneline origin/main..HEAD` for divergence
+- If local is behind: `git stash` → `git pull --rebase origin main` → `git stash pop`
+- Never use `git format-patch` + `git am` across diverged branches — conflicts are guaranteed
+- After merging/rebase, re-run `npm run lint -- --fix` and `npm run format`
+
+### Editor Tooling
+- The `editor` tool's `old_text → new_text` replacement can corrupt indentation in `.vue` files
+- Always run `npx prettier --write <file>` after using the editor tool on `.vue` files
+- Prefer `run_commands` with `sed` or `cat` for precise line-level changes in complex files
+
+### Dependencies
+- Check versions before creating config files (e.g., ESLint v9+ uses flat config)
+- Use `npm install --save-dev` for dev dependencies
+- Semver ranges in package.json: use `^` for libraries, `latest` for apps (as is current convention)
+
+### Issues
+- Close issues with `gh issue close <number>` after pushing
+- Use `gh issue view <number>` to read issue details

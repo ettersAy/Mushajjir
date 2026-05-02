@@ -8,21 +8,33 @@
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "lint": "eslint src/",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.{js,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@vitejs/plugin-vue": "latest",
-    "vite": "latest",
-    "vue": "latest",
-    "@vue-flow/core": "latest",
     "@vue-flow/background": "latest",
     "@vue-flow/controls": "latest",
+    "@vue-flow/core": "latest",
     "@vue-flow/minimap": "latest",
-    "pinia": "latest"
+    "pinia": "latest",
+    "vite": "latest",
+    "vue": "latest"
   },
   "devDependencies": {
     "eslint": "^10.2.1",
     "eslint-plugin-vue": "^10.9.0",
-    "prettier": "^3.8.3"
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.3",
+    "vitest": "^4.1.5"
   }
 }

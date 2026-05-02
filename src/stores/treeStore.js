@@ -601,8 +601,9 @@ export const useTreeStore = defineStore('tree', () => {
       createChildNodes(parentId, tasks)
       updateNodeData(parentId, { systemMessage: '' })
     } catch (error) {
-      updateNodeData(parentId, { systemMessage: error.message })
-      alert(error.message)
+      const msg = error.message || 'Unknown error during AI divide'
+      updateNodeData(parentId, { systemMessage: msg })
+      console.error('[aiDivide]', msg)
     } finally {
       setNodeBusy(parentId, false)
     }
@@ -623,8 +624,9 @@ export const useTreeStore = defineStore('tree', () => {
       })
       updateNodeData(id, { ...improved, systemMessage: '' })
     } catch (error) {
-      updateNodeData(id, { systemMessage: error.message })
-      alert(error.message)
+      const msg = error.message || 'Unknown error during AI reformulate'
+      updateNodeData(id, { systemMessage: msg })
+      console.error('[aiReformulate]', msg)
     } finally {
       setNodeBusy(id, false)
     }

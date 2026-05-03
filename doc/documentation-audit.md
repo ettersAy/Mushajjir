@@ -1,63 +1,57 @@
 # Documentation Audit — Mushajjir
 
-Generated after implementing issue #8 (Post-Audit Friction Fixes).
+Updated after implementing issue #10 (Post-Audit Friction Fixes).
 
 ---
 
-## Documentation Gaps Still Remaining
+## Status After Issue #10
 
-### Missing Data Model Documentation
-
-- Tree node shape (`{ id, type, position, data: { title, content, notes, tags, taskStatus, collapsed, width, height, childCount, parentId, systemMessage } }`) is not documented anywhere
-- Edge kinds (`hierarchy` vs `relation`) distinction not formally documented — only inferrable from code
-- `schemaVersion` history and migration rules not collected in one place
-- The computed pipeline (`nodes` → `visibleNodeIds` → `flowNodes`/`flowEdges`) is the core data flow but not documented
-
-### Missing Environment / Assumptions Documentation
-
-- Browser-only assumptions never explicitly stated (no SSR, no backend)
-- localStorage quota limits and failure modes undocumented
-- No `.node-version` or `engines` field in `package.json` — Node.js version requirement inferred from `type: "module"`
-- No deployment documentation beyond the GitHub Pages workflow YAML
-
-### Missing Testing / Quality Documentation
-
-- Zero test infrastructure — no test framework, no test files, no testing conventions documented
-- No CONTRIBUTING.md existed before this mission (now created)
-- No changelog or version history
-- No migration guide between schema versions (v1 → v2)
-
-### Missing Debugging / Troubleshooting Documentation
-
-- How to debug AI provider failures (CORS, API key, rate limits)
-- How to inspect localStorage contents for debugging
-- How to reproduce the default tree state
-
-### Missing Automation Documentation
-
-- No pre-commit hooks or quality gates (lint + format must be run manually)
-- No benchmark runner script exists despite `doc/performance-budget.md` being created
-
----
-
-## Recently Filled Gaps (This Mission)
+All 5 recommended documentation gaps from the previous audit are now resolved:
 
 | Gap | Resolution |
 |---|---|
-| Developer onboarding | `CONTRIBUTING.md` created |
-| Architecture Decision Records | `doc/adr/001` through `004` created |
-| Component hierarchy & data flow | `doc/architecture-reference.md` created |
-| CSS variable reference | Included in `architecture-reference.md` |
-| Performance targets | `doc/performance-budget.md` created |
-| Config constants location | `src/config/index.js` created |
-| ESM import convention | Documented in `.clinerules` |
+| Data Model Reference | `doc/data-model.md` created — full node/edge/settings/persistence field reference |
+| Environment Setup | `.node-version` (v22) + `engines` field in `package.json` |
+| Changelog | `CHANGELOG.md` created with v0.1.0 and Unreleased entries |
+| Deployment Guide | `doc/deployment.md` created — deploy URL, triggers, verification steps |
+| Testing Plan | `CONTRIBUTING.md` updated with Vitest conventions, run commands, examples |
+
+## Documentation Gaps Still Remaining
+
+### Missing Migration Documentation
+
+- Schema v1 → v2 migration behavior is in code (`normalizeNodeData` legacy status handling) but no standalone migration guide
+- ADR 004 describes versioning strategy but not the actual field changes between versions
+
+### Missing Debugging / Troubleshooting
+
+- AI provider failure modes (CORS, API key, rate limits) — no troubleshooting guide
+- localStorage inspection techniques for debugging tree state
+- How to reproduce the default tree state without clearing saved data
+
+### Missing Architecture Detail
+
+- The computed pipeline (`nodes` → `visibleNodeIds` → `flowNodes`/`flowEdges`) is documented in `architecture-reference.md` but could benefit from a visual data flow diagram
+- `outlineRows` computed property is not mentioned in architecture docs
+
+### Missing Security Documentation
+
+- API keys stored in localStorage — no security/risk documentation
+- No CSP or security headers documentation
+- No mention of XSS surface via `v-html` and `renderMarkdown`
 
 ---
 
-## Recommended Next Documentation Work
+## Documentation Assets Now Available
 
-1. **Data Model Reference** (`doc/data-model.md`) — document all node fields, edge kinds, settings schema, and `normalizeNodeData` defaults
-2. **Environment Setup** — add `.node-version` file and `engines` field to `package.json`
-3. **Testing Plan** (`doc/testing-plan.md`) — document test framework choice (Vitest), test naming conventions, and initial test targets
-4. **Changelog** (`CHANGELOG.md`) — track versions and breaking changes
-5. **Deployment Guide** (`doc/deployment.md`) — document GitHub Pages deploy workflow steps
+| Asset | Path | Purpose |
+|---|---|---|
+| Data Model Reference | `doc/data-model.md` | Full field reference, validation rules, schema versioning |
+| Architecture Reference | `doc/architecture-reference.md` | Component hierarchy, data flow, conventions |
+| Performance Budget | `doc/performance-budget.md` | Target thresholds for all operations |
+| Deployment Guide | `doc/deployment.md` | GitHub Pages deployment instructions |
+| ADRs (4) | `doc/adr/` | Architecture decisions (persistence, state, AI, schema) |
+| Changelog | `CHANGELOG.md` | Version history |
+| Contributing Guide | `CONTRIBUTING.md` | Setup, conventions, testing, PR checklist |
+| Mission & Spec Docs | `doc/` | Original mission and specification documents |
+

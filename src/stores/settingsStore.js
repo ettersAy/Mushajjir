@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
-import { loadSettings, saveSettings } from '../services/settingsService'
+import { loadSettings, saveSettings } from '../services/settingsService.js'
 
 function makeProviderId(name) {
   return (

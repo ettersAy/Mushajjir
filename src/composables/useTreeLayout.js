@@ -1,18 +1,3 @@
-export function useTreeLayout() {
-  function childPositions(parentPosition, count) {
-    const gap = 360
-    const yGap = 290
-    const totalWidth = (count - 1) * gap
-
-    return Array.from({ length: count }, (_, index) => ({
-      x: parentPosition.x - totalWidth / 2 + index * gap,
-      y: parentPosition.y + yGap,
-    }))
-  }
-
-  return { childPositions }
-}
-
 export function layoutTree(nodes, hierarchyEdges, rootId = 'root') {
   const nodeById = new Map(nodes.map((node) => [node.id, node]))
   const childrenByParent = new Map()

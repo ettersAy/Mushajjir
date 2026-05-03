@@ -120,9 +120,9 @@
 <script setup>
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { Handle, Position } from '@vue-flow/core'
-import { useTreeStore } from '../stores/treeStore'
-import { clamp, getTagColor } from '../utils/treeUtils'
-import { renderMarkdown } from '../utils/markdown'
+import { useTreeStore } from '../stores/treeStore.js'
+import { clamp, getTagColor } from '../utils/treeUtils.js'
+import { renderMarkdown } from '../utils/markdown.js'
 
 const props = defineProps({
   id: { type: String, required: true },

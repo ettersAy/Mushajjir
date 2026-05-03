@@ -42,8 +42,8 @@ import SettingsPanel from '../components/SettingsPanel.vue'
 import OutlinePanel from '../components/OutlinePanel.vue'
 import StickyNode from '../components/StickyNode.vue'
 import TaskModal from '../components/TaskModal.vue'
-import { useTreeStore } from '../stores/treeStore'
-import { useSettingsStore } from '../stores/settingsStore'
+import { useTreeStore } from '../stores/treeStore.js'
+import { useSettingsStore } from '../stores/settingsStore.js'
 
 const store = useTreeStore()
 const settings = useSettingsStore()

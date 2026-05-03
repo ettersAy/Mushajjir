@@ -12,8 +12,6 @@
 - Use `eslint.config.js` (flat config) — ESLint v10 no longer supports `.eslintrc.*`
 - Run `npm run lint` before committing; 0 errors required
 - Run `npm run format` (Prettier) before committing
-- Run `npm test` (vitest) before committing; all tests must pass
-- Run `node benchmark/benchmark.mjs` to measure computed property performance
 - Semi: false, singleQuote: true, trailingComma: all, printWidth: 120
 - Self-closing void elements (`<input/>`) are used consistently — `vue/html-self-closing` is disabled
 - Intentional `v-html` usage (markdown rendering) must be preceded by `<!-- eslint-disable-next-line vue/no-v-html -->`
@@ -35,71 +33,22 @@
 - Use `npm install --save-dev` for dev dependencies
 - Semver ranges in package.json: use `^` for libraries, `latest` for apps (as is current convention)
 
+### ESM Imports
+- ALL local `.js` file imports MUST include the `.js` extension (Node.js ESM requirement)
+- Example: `import { foo } from '../utils/treeUtils.js'` — NOT `'../utils/treeUtils'`
+- Vue component imports use `.vue` extension: `import Foo from './Foo.vue'`
+
+### Config Constants
+- Configuration data lives in `src/config/index.js`
+- Current exports: `TASK_STATUSES`, `DEFAULT_TAGS`, `NODE_SIZE`, `MAX_CHILDREN`
+- `src/utils/treeUtils.js` re-exports `TASK_STATUSES` and `DEFAULT_TAGS` for backward compatibility
+- New config values should be added to `src/config/index.js`, not to utility files
+
+### Architecture Docs
+- Architecture Decision Records (ADRs) live in `doc/adr/`
+- See `doc/architecture-reference.md` for component hierarchy and data flow
+- See `doc/performance-budget.md` for performance targets
+
 ### Issues
 - Close issues with `gh issue close <number>` after pushing
 - Use `gh issue view <number>` to read issue details
-
-## Data Model
-
-### Node Shape
-Every node in the tree conforms to this shape (normalized by `normalizeNodeData()` in `treeUtils.js`):
-```js
-{
-  id: string,                  // "node_<uuid>" or "root"
-  type: 'task',                // always 'task'
-  position: { x: number, y: number },
-  data: {
-    title: string,             // default 'Untitled task'
-    content: string,           // default ''
-    notes: string,             // default ''
-    notesOpen: boolean,
-    tags: string[],            // cleaned, max 28 chars
-    parentId: string | null,
-    childCount: number | null, // clamped 1..12
-    taskStatus: 'todo' | 'in-progress' | 'blocked' | 'done',
-    systemMessage: string,     // AI status/error
-    collapsed: boolean,
-    width: number,             // clamped 280..560, default 320
-    height: number | null,     // clamped 230..760
-  }
-}
-```
-Computed (non-persisted) fields added to `flowNodes`: `progress`, `actualChildCount`, `hiddenDescendantCount`, `searchMatch`, `dimmed`, `relationDraftSourceId`.
-
-### Edge Kinds
-Two edge kinds, distinguished by `edge.data.kind`:
-- **`hierarchy`**: Parent-child tree edges. Solid line (2px). Created via `createHierarchyEdge()`. Drives `childrenByParent`/`parentByChild` maps.
-- **`relation`**: Cross-tree references. Dashed line (1.8px). Created via `createRelationEdge()`. Has optional `label`.
-
-### Store Computed Pipeline (`treeStore.js`)
-Key computed properties and their dependencies (simplified):
-```
-nodes + edges → nodeById, childrenByParent, parentByChild
-nodes + searchQuery → matchingNodeIds → searchContextIds
-nodes + activeTagFilters → tagVisibleIds
-nodes → collapsedHiddenIds → visibleNodeIds (via tagVisibleIds + collapsedHiddenIds)
-nodes + childrenByParent + nodeById → progressByNode (recursive: leaf=status, parent=average)
-all above → flowNodes (final display nodes for Vue Flow)
-edges + visibleNodeIds + focusedBranchIds → flowEdges (final display edges)
-```
-
-Refer to `doc/architecture-reference.md` for the full dependency graph and details.
-
-### Settings Schema
-Persisted to localStorage key `mushajjir-settings-v1`:
-```js
-{
-  general: { appName, defaultChildCount, theme },
-  save: { folderPath, format },
-  ai: { selectedProviderId, providers: [{ id, name, baseUrl, model, apiKey }] },
-  prompts: { selectedDividePromptId, dividePrompts: [{ id, name, content }] },
-}
-```
-Default providers: OpenRouter, DeepSeek, Grok/xAI. See `settingsService.js` for defaults.
-
-### AI Provider Interface
-All providers use OpenAI-compatible chat completions API:
-- `divideTask()` → expects JSON array of `{ title, content }` objects
-- `reformulateTask()` → expects JSON object `{ "title": "", "content": "" }`
-- Uses `extractJsonArray()` / regex fallback for parsing
-- Error handling via `systemMessage` on node data + `alert()` fallback

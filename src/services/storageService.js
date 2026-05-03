@@ -1,4 +1,4 @@
-import { normalizeTree } from '../utils/treeUtils'
+import { normalizeTree } from '../utils/treeUtils.js'
 
 const STORAGE_KEY = 'mushajjir-tree-v2'
 const LEGACY_STORAGE_KEY = 'mushajjir-tree-v1'

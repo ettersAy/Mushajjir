@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { useTreeStore } from '../stores/treeStore'
+import { useTreeStore } from '../stores/treeStore.js'
 
 const store = useTreeStore()
 </script>

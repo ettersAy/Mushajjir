@@ -46,9 +46,9 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useTreeStore } from '../stores/treeStore'
-import { useSettingsStore } from '../stores/settingsStore'
-import { getTagColor } from '../utils/treeUtils'
+import { useTreeStore } from '../stores/treeStore.js'
+import { useSettingsStore } from '../stores/settingsStore.js'
+import { getTagColor } from '../utils/treeUtils.js'
 
 defineProps({
   outlineOpen: { type: Boolean, default: true },

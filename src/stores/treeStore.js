@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
-import { loadTree, saveTree, saveTreeNow, clearTree } from '../services/storageService'
-import { layoutTree } from '../composables/useTreeLayout'
-import { divideTask, reformulateTask } from '../services/aiService'
-import { useSettingsStore } from './settingsStore'
+import { loadTree, saveTree, saveTreeNow, clearTree } from '../services/storageService.js'
+import { layoutTree } from '../composables/useTreeLayout.js'
+import { divideTask, reformulateTask } from '../services/aiService.js'
+import { useSettingsStore } from './settingsStore.js'
 import {
   DEFAULT_TAGS,
   TASK_STATUSES,
@@ -19,7 +19,7 @@ import {
   normalizeNodeData,
   normalizeTree,
   treeToMarkdown,
-} from '../utils/treeUtils'
+} from '../utils/treeUtils.js'
 
 const HIERARCHY_EDGE_STYLE = {
   stroke: 'var(--edge)',
@@ -601,9 +601,8 @@ export const useTreeStore = defineStore('tree', () => {
       createChildNodes(parentId, tasks)
       updateNodeData(parentId, { systemMessage: '' })
     } catch (error) {
-      const msg = error.message || 'Unknown error during AI divide'
-      updateNodeData(parentId, { systemMessage: msg })
-      console.error('[aiDivide]', msg)
+      updateNodeData(parentId, { systemMessage: error.message })
+      alert(error.message)
     } finally {
       setNodeBusy(parentId, false)
     }
@@ -624,9 +623,8 @@ export const useTreeStore = defineStore('tree', () => {
       })
       updateNodeData(id, { ...improved, systemMessage: '' })
     } catch (error) {
-      const msg = error.message || 'Unknown error during AI reformulate'
-      updateNodeData(id, { systemMessage: msg })
-      console.error('[aiReformulate]', msg)
+      updateNodeData(id, { systemMessage: error.message })
+      alert(error.message)
     } finally {
       setNodeBusy(id, false)
     }

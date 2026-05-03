@@ -106,9 +106,9 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { useTreeStore } from '../stores/treeStore'
-import { getTagColor } from '../utils/treeUtils'
-import { renderMarkdown } from '../utils/markdown'
+import { useTreeStore } from '../stores/treeStore.js'
+import { getTagColor } from '../utils/treeUtils.js'
+import { renderMarkdown } from '../utils/markdown.js'
 
 const props = defineProps({
   nodeId: { type: String, required: true },

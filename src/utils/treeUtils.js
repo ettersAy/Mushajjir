@@ -1,11 +1,6 @@
-export const TASK_STATUSES = [
-  { id: 'todo', label: 'Todo' },
-  { id: 'in-progress', label: 'In progress' },
-  { id: 'blocked', label: 'Blocked' },
-  { id: 'done', label: 'Done' },
-]
+import { DEFAULT_TAGS, TASK_STATUSES } from '../config/index.js'
 
-export const DEFAULT_TAGS = ['backend', 'frontend', 'test', 'urgent', 'ai-generated']
+export { TASK_STATUSES, DEFAULT_TAGS }
 
 const TAG_COLORS = [
   { background: '#e7f0ff', color: '#1f4f8f' },

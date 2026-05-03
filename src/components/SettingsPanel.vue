@@ -181,7 +181,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useSettingsStore } from '../stores/settingsStore'
+import { useSettingsStore } from '../stores/settingsStore.js'
 
 defineEmits(['close'])
 

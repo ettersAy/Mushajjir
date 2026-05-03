@@ -44,13 +44,13 @@ export function saveTreeNow(payload) {
 }
 
 export function saveTree(payload) {
-  globalThis.clearTimeout(saveTimer)
-  saveTimer = globalThis.setTimeout(() => saveTreeNow(payload), SAVE_DEBOUNCE_MS)
+  window.clearTimeout(saveTimer)
+  saveTimer = window.setTimeout(() => saveTreeNow(payload), SAVE_DEBOUNCE_MS)
 }
 
 export function clearTree() {
   const local = storage()
-  globalThis.clearTimeout(saveTimer)
+  window.clearTimeout(saveTimer)
   if (!local) return
   local.removeItem(STORAGE_KEY)
   local.removeItem(LEGACY_STORAGE_KEY)

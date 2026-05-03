@@ -112,7 +112,56 @@ Mushajjir/
 
 ## Testing
 
-Tests are not yet set up. When adding tests, use Vitest (Vite-native test runner) placed in a `src/__tests__/` directory mirroring the source structure.
+Tests use **Vitest** (Vite-native test runner). Test files live in `__tests__/` directories mirroring the source structure.
+
+### Running tests
+
+```bash
+# Run all tests once
+npm test
+
+# Watch mode (re-runs on file changes)
+npm run test:watch
+```
+
+### Test conventions
+
+- Test files: `src/**/__tests__/*.test.js`
+- Use `describe` / `it` / `expect` from Vitest
+- Use fixture generators from `src/utils/testFixtures.js` for tree data
+- Follow AAA pattern: Arrange, Act, Assert
+
+### Current test coverage
+
+- **`src/utils/__tests__/testFixtures.test.js`** — Validates fixture generator output (all tree sizes, reproducibility, edge validity)
+- **`src/services/__tests__/aiResponseSchema.test.js`** — Validates AI response parsing and retry logic
+
+### Adding new tests
+
+1. Create `__tests__/` directory next to the source file
+2. Name test file after the source: `src/utils/treeUtils.js` → `src/utils/__tests__/treeUtils.test.js`
+3. Import from `vitest`: `import { describe, it, expect } from 'vitest'`
+4. Import the module under test with `.js` extension
+
+Example:
+
+```js
+import { describe, it, expect } from 'vitest'
+import { normalizeNodeData, clamp } from '../treeUtils.js'
+
+describe('normalizeNodeData', () => {
+  it('provides defaults for empty input', () => {
+    const result = normalizeNodeData({})
+    expect(result.title).toBe('Untitled task')
+    expect(result.taskStatus).toBe('todo')
+    expect(result.collapsed).toBe(false)
+  })
+})
+```
+
+### CI integration
+
+Tests run automatically on push via GitHub Actions (workflow TBD). Run `npm test` locally before pushing to catch regressions early.
 
 ## Pull Request Checklist
 
